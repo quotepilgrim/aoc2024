@@ -1,4 +1,5 @@
 local filename = ""
+local answer = 0
 
 local function get_data(input)
     local data = {}
@@ -58,6 +59,8 @@ function love.load()
     else
         part_two()
     end
+
+    love.system.setClipboardText(answer)
 end
 
 function love.keypressed(key)

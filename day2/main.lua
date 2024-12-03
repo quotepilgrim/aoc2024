@@ -1,4 +1,6 @@
 local filename = ""
+local results = {}
+local answer = 0
 
 local function get_data(input)
     local data = {}
@@ -28,8 +30,36 @@ local function part_one()
     if data == nil then
         return
     end
+
     for _, t in ipairs(data) do
-        print(table.concat(t, " "))
+        local changes = {}
+        for i = 1, #t - 1, 1 do
+            table.insert(changes, t[i] - t[i + 1])
+        end
+
+        local result = "safe"
+        for i = 1, #changes, 1 do
+            if math.abs(changes[i]) > 3 then
+                result = "unsafe"
+            end
+            if changes[i] == 0 then
+                result = "unsafe"
+            end
+            if i == #changes then
+                break
+            end
+            if changes[i] * changes[i + 1] < 0 then
+                result = "unsafe"
+            end
+        end
+
+        table.insert(results, result)
+    end
+
+    for _, v in ipairs(results) do
+        if v == "safe" then
+            answer = answer + 1
+        end
     end
 end
 
@@ -58,6 +88,12 @@ function love.load()
     else
         part_two()
     end
+
+    love.system.setClipboardText(answer)
+end
+
+function love.draw()
+    love.graphics.print(answer, 12, 12)
 end
 
 function love.keypressed(key)
