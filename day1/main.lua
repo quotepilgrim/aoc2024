@@ -2,9 +2,10 @@ local filename = ""
 local list_a = {}
 local list_b = {}
 local diffs = {}
-local sum = 0
+local scores = {}
+local result = 0
 
-local function part1()
+local function make_lists()
 	local file = io.open(filename, "r")
 
 	if file == nil then
@@ -17,7 +18,7 @@ local function part1()
 		local tokens = {}
 
 		for t in line:gmatch("[^%s]+") do
-			table.insert(tokens, tonumber(t))
+			table.insert(tokens, t)
 		end
 
 		table.insert(list_a, tokens[1])
@@ -27,6 +28,10 @@ local function part1()
 	end
 
 	file:close()
+end
+
+local function part1()
+	make_lists()
 
 	table.sort(list_a)
 	table.sort(list_b)
@@ -36,24 +41,51 @@ local function part1()
 	end
 
 	for _, v in ipairs(diffs) do
-		sum = sum + v
+		result = result + v
+	end
+end
+
+local function part2()
+	make_lists()
+	for _, v in ipairs(list_a) do
+		local count = 0
+		for _, w in ipairs(list_b) do
+			if v == w then
+				count = count + 1
+			end
+		end
+		table.insert(scores, count * v)
 	end
 
-	love.system.setClipboardText(sum)
+	for _, v in ipairs(scores) do
+		result = result + v
+	end
 end
 
 function love.load()
+	local part = 1
+
 	while #arg > 0 do
 		local v = table.remove(arg, 1)
 		if v == "-f" then
 			filename = table.remove(arg, 1)
 		end
+		if v == "-p2" then
+			part = 2
+		end
 	end
-	part1()
+
+	if part == 1 then
+		part1()
+	else
+		part2()
+	end
+
+	love.system.setClipboardText(result)
 end
 
 function love.draw()
-	love.graphics.print(sum)
+	love.graphics.print(result, 12, 12)
 end
 
 function love.keypressed(key)
