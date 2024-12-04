@@ -63,6 +63,36 @@ local function part_one()
     end
 end
 
+local function is_safe(t, skip)
+    local pup, up
+    local change = 0
+    local result = true
+    local newt = {}
+
+    for i, v in ipairs(t) do
+        newt[i] = v
+    end
+    
+    table.remove(newt, skip)
+
+    for i = 1, #newt - 1, 1 do
+        change = newt[i] - newt[i + 1]
+
+        if change == 0 or math.abs(change) > 3 then
+            result = false
+        end
+
+        up = change < 0
+
+        if pup ~= nil and pup ~= up then
+            result = false
+        end
+
+        pup = up
+    end
+    return result
+end
+
 local function part_two()
     local data = get_data(filename)
     if data == nil then
@@ -70,39 +100,14 @@ local function part_two()
     end
 
     for _, t in ipairs(data) do
-        local debug = false
-        local is_safe = true
-        local pup, up
-        local change = 0
-
+        local safe = false
         for i = 1, #t, 1 do
-            if debug then
-                io.write(t[i] .. "\t")
-            end
-
-            if i == #t then
+            safe = is_safe(t, i)
+            if safe then
                 break
             end
-
-            change = t[i] - t[i + 1]
-            if change == 0 or math.abs(change) > 3 then
-                is_safe = false
-            end
-
-            up = change < 0
-
-            if (pup ~= nil) and (pup ~= up) then
-                is_safe = false
-            end
-
-            pup = up
         end
-
-        if debug then
-            io.write(tostring(is_safe) .. "\n")
-        end
-
-        table.insert(results, is_safe)
+        table.insert(results, safe)
     end
 
     for _, v in ipairs(results) do
