@@ -68,6 +68,48 @@ local function part_two()
     if data == nil then
         return
     end
+
+    for _, t in ipairs(data) do
+        local debug = false
+        local is_safe = true
+        local pup, up
+        local change = 0
+
+        for i = 1, #t, 1 do
+            if debug then
+                io.write(t[i] .. "\t")
+            end
+
+            if i == #t then
+                break
+            end
+
+            change = t[i] - t[i + 1]
+            if change == 0 or math.abs(change) > 3 then
+                is_safe = false
+            end
+
+            up = change < 0
+
+            if (pup ~= nil) and (pup ~= up) then
+                is_safe = false
+            end
+
+            pup = up
+        end
+
+        if debug then
+            io.write(tostring(is_safe) .. "\n")
+        end
+
+        table.insert(results, is_safe)
+    end
+
+    for _, v in ipairs(results) do
+        if v then
+            answer = answer + 1
+        end
+    end
 end
 
 function love.load()
