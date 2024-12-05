@@ -3,13 +3,13 @@ local answer = 0
 
 local function get_data(input)
     local data = {}
-    local file = io.open(input, "rb")
+    local file = io.open(input, "r")
 
     if file == nil then
         love.event.quit()
         return
     end
-    
+
     data = file:read("*all")
 
     file:close()
@@ -22,7 +22,7 @@ local function part_one()
         return
     end
     for a, b in data:gmatch("mul%((%d%d?%d?),(%d%d?%d?)%)") do
-        answer = answer + a*b
+        answer = answer + a * b
     end
 end
 
@@ -30,6 +30,20 @@ local function part_two()
     local data = get_data(filename)
     if data == nil then
         return
+    end
+    local x, y
+    local mul_enabled = true
+    for a in data:gmatch("d?o?[mn]?[u'd][lto]%(.-%)") do
+        if a:sub(-4) == "do()" then
+            mul_enabled = true
+        elseif a:sub(-7) == "don't()" then
+            mul_enabled = false
+        elseif mul_enabled and a:sub(1, 4) == "mul(" then
+            x, y = a:match("mul%((%d%d?%d?),(%d%d?%d?)%)")
+            if x ~= nil and y ~= nil then
+                answer = answer + x * y
+            end
+        end
     end
 end
 
