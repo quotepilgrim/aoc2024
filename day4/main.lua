@@ -103,13 +103,12 @@ end
 
 local function part_two()
     local data = get_data(filename)
-    local word = ""
     if data == nil then
         return
     end
     for i = 1, #data do
         for j = 1, #data[1] do
-            word = get_xword(data, i, j)
+            local word = get_xword(data, i, j)
             if word == "MMASS" or word == "MSAMS" or word == "SMASM" or word == "SSAMM" then
                 answer = answer + 1
             end
