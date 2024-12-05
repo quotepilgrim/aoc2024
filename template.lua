@@ -63,6 +63,10 @@ function love.load()
     love.system.setClipboardText(answer)
 end
 
+function love.draw()
+    love.graphics.print(answer, 12, 12)
+end
+
 function love.keypressed(key)
     if key == "escape" then
         love.event.quit()
