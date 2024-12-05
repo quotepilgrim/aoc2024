@@ -68,7 +68,6 @@ local function get_diagonal(t, i, j, backwards)
 end
 
 local function get_xword(t, i, j)
-    local word = ""
     if i + 2 > #t or j + 2 > #t[1] then
         return ""
     end
