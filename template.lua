@@ -12,11 +12,7 @@ local function get_data(input)
 
     local line = file:read()
     while line ~= nil do
-        local tokens = {}
-        for t in line:gmatch("[^%s]+") do
-            table.insert(tokens, t)
-        end
-        table.insert(data, tokens)
+        table.insert(data, line)
         line = file:read()
     end
 
@@ -29,9 +25,7 @@ local function part_one()
     if data == nil then
         return
     end
-    for _, t in ipairs(data) do
-        print(table.concat(t, " "))
-    end
+    print(table.concat(data, "\n"))
 end
 
 local function part_two()
