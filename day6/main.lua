@@ -33,13 +33,11 @@ local function print_data(data)
     end
 end
 
-local function part_one()
-    local data = get_data(filename)
-    if data == nil then
-        return
-    end
+local function move(data)
     local exited = false
-    while not exited do
+    local looped = false
+    local positions = {}
+    while not exited and not looped do
         for i = 1, #data do
             for j = 1, #data[1] do
                 if data[i][j] == "^" then
@@ -49,6 +47,11 @@ local function part_one()
                     elseif data[i - 1][j] == "#" then
                         data[i][j] = ">"
                     else
+                        if positions[i .. data[i][j] .. j] then
+                            looped = true
+                        else
+                            positions[i .. data[i][j] .. j] = true
+                        end
                         data[i][j] = "x"
                         data[i - 1][j] = "^"
                     end
@@ -60,6 +63,11 @@ local function part_one()
                     elseif data[i][j + 1] == "#" then
                         data[i][j] = "v"
                     else
+                        if positions[i .. data[i][j] .. j] then
+                            looped = true
+                        else
+                            positions[i .. data[i][j] .. j] = true
+                        end
                         data[i][j] = "x"
                         data[i][j + 1] = ">"
                     end
@@ -71,6 +79,11 @@ local function part_one()
                     elseif data[i + 1][j] == "#" then
                         data[i][j] = "<"
                     else
+                        if positions[i .. data[i][j] .. j] then
+                            looped = true
+                        else
+                            positions[i .. data[i][j] .. j] = true
+                        end
                         data[i][j] = "x"
                         data[i + 1][j] = "v"
                     end
@@ -82,6 +95,11 @@ local function part_one()
                     elseif data[i][j - 1] == "#" then
                         data[i][j] = "^"
                     else
+                        if positions[i .. data[i][j] .. j] then
+                            looped = true
+                        else
+                            positions[i .. data[i][j] .. j] = true
+                        end
                         data[i][j] = "x"
                         data[i][j - 1] = "<"
                     end
@@ -89,6 +107,15 @@ local function part_one()
             end
         end
     end
+    return looped
+end
+
+local function part_one()
+    local data = get_data(filename)
+    if data == nil then
+        return
+    end
+    move(data)
     for _, t in ipairs(data) do
         for _, v in ipairs(t) do
             if v == "x" then
@@ -98,10 +125,36 @@ local function part_one()
     end
 end
 
+local function copy_table(t)
+    local copy = {}
+    for i, tbl in ipairs(t) do
+        copy[i] = {}
+        for j, v in ipairs(tbl) do
+            copy[i][j] = v
+        end
+    end
+    return copy
+end
+
 local function part_two()
     local data = get_data(filename)
+    local looped
+    local copy = {}
     if data == nil then
         return
+    end
+    for i = 1, #data do
+        print("trying " .. i)
+        for j = 1, #data[1] do
+            if data[i][j] == "." then
+                copy = copy_table(data)
+                copy[i][j] = "#"
+                looped = move(copy)
+                if looped then
+                    answer = answer + 1
+                end
+            end
+        end
     end
 end
 
