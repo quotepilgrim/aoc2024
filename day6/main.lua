@@ -144,7 +144,6 @@ local function part_two()
         return
     end
     for i = 1, #data do
-        print("trying " .. i)
         for j = 1, #data[1] do
             if data[i][j] == "." then
                 copy = copy_table(data)
