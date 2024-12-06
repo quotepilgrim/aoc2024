@@ -31,9 +31,26 @@ local function part_one()
     if rules == nil or updates == nil then
         return
     end
-    print(table.concat(rules, "\n"))
-    io.write("---")
-    print(table.concat(updates, "\n"))
+    for _, u in ipairs(updates) do
+        local valid = true
+        for _, r in ipairs(rules) do
+            local a, b = r:match("(.+)|(.+)")
+            local a_pos = u:find(a)
+            local b_pos = u:find(b)
+            if a_pos ~= nil and b_pos ~= nil and a_pos > b_pos then
+                valid = false
+                break
+            end
+        end
+        if valid then
+            local t ={}
+            for i in u:gmatch("([^,]+)") do
+                table.insert(t, i)
+            end
+            local middle = t[math.ceil(#t/2)] or 0
+            answer = answer + middle
+        end
+    end
 end
 
 local function part_two()
