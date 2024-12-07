@@ -33,6 +33,8 @@ local function calculate(eq, ops)
             result = result + eq[i + 1]
         elseif ops[i] == "*" then
             result = result * eq[i + 1]
+        elseif ops[i] == ".." then
+            result = tonumber(tostring(result) .. tostring(eq[i+1]))
         end
     end
     return result
@@ -80,6 +82,39 @@ local function part_two()
     if data == nil then
         return
     end
+    local expected
+    local equation = {}
+    for _, line in ipairs(data) do
+        local ops = {}
+        expected = tonumber(line[1])
+        equation = line[2]
+        for _ = 1, #equation - 1 do
+            table.insert(ops, "+")
+        end
+        local done = false
+        local result = 0
+        while not done do
+            result = calculate(equation, ops)
+            if result == expected then
+                answer = answer + expected
+                break
+            end
+            for i = #ops, 1, -1 do
+                if ops[i] == "+" then
+                    ops[i] = ".."
+                    break
+                elseif ops[i] == ".." then
+                    ops[i] = "*"
+                    break
+                elseif ops[i] == "*" then
+                    ops[i] = "+"
+                end
+                if i == 1 then
+                    done = true
+                end
+            end
+        end
+    end
 end
 
 function love.load()
@@ -101,11 +136,11 @@ function love.load()
         part_two()
     end
 
-    love.system.setClipboardText(answer)
+    love.system.setClipboardText(string.format("%.0f",answer))
 end
 
 function love.draw()
-    love.graphics.print(answer, 12, 12)
+    love.graphics.print(string.format("%.0f", answer), 12, 12)
 end
 
 function love.keypressed(key)
