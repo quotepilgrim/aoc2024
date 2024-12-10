@@ -32,7 +32,7 @@ local function get_type(data, t)
     return data[t[1]][t[2]]
 end
 
-local function make_antinodes(a, b, nodes)
+local function make_antinode(a, b, nodes)
     local ax, bx = a[2], b[2]
     local ay, by = a[1], b[1]
     local dx = bx - ax
@@ -52,7 +52,73 @@ local function make_antinodes(a, b, nodes)
     end
 end
 
+local function make_antinodes(a, b, nodes)
+    local ax, bx = a[2], b[2]
+    local ay, by = a[1], b[1]
+    local dx = bx - ax
+    local dy = by - ay
+
+    if ax == bx and ay == by then
+        return
+    end
+
+    local cx, cy = dx, dy
+
+    local inbounds = true
+    while inbounds do
+        local nx = ax - dx
+        local ny = ay - dy
+        if nodes[ny] ~= nil then
+            if nodes[ny][nx] ~= nil then
+                nodes[ny][nx] = true
+            else
+                inbounds = false
+            end
+        else
+            inbounds = false
+        end
+        dx = dx + cx
+        dy = dy + cy
+    end
+end
+
 local function part_one()
+    local data = get_data(filename)
+    if data == nil then
+        return
+    end
+    local antennae = {}
+    local antinodes = {}
+    for i, t in ipairs(data) do
+        antinodes[i] = {}
+        for j, v in ipairs(t) do
+            if is_antenna(v) then
+                table.insert(antennae, { i, j })
+            end
+            antinodes[i][j] = false
+        end
+    end
+    for a = 1, #antennae do
+        for b = 1, #antennae do
+            if get_type(data, antennae[a]) == get_type(data, antennae[b]) then
+                make_antinode(antennae[a], antennae[b], antinodes)
+            end
+        end
+    end
+    for y = 1, #antinodes do
+        for x = 1, #antinodes[1] do
+            if antinodes[y][x] then
+                io.write("#")
+                answer = answer + 1
+            else
+                io.write(".")
+            end
+        end
+        io.write("\n")
+    end
+end
+
+local function part_two()
     local data = get_data(filename)
     if data == nil then
         return
@@ -85,13 +151,6 @@ local function part_one()
             end
         end
         io.write("\n")
-    end
-end
-
-local function part_two()
-    local data = get_data(filename)
-    if data == nil then
-        return
     end
 end
 
