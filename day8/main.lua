@@ -33,32 +33,22 @@ local function get_type(data, t)
 end
 
 local function make_antinodes(a, b, nodes)
-    local ay, ax = a[1], a[2]
-    local by, bx = b[1], b[2]
-    local dx = ax - bx
-    local dy = ay - by
+    local ax, bx = a[2], b[2]
+    local ay, by = a[1], b[1]
+    local dx = bx - ax
+    local dy = by - ay
+
+    if ax == bx and ay == by then
+        return
+    end
+
     local nx = ax - dx
     local ny = ay - dy
 
-    local dx2 = bx - ax
-    local dy2 = by - ay
-    local nx2 = ax - dx2
-    local ny2 = ay - dy2
-
-    local n1_exists = true
-    local n2_exists = true
-
-    if ny > #nodes or ny < 1 or nx > #nodes[ny] or nx < 1 then
-        n1_exists = false
-    end
-    if ny2 > #nodes or ny2 < 1 or nx2 > #nodes[ny2] or nx2 < 1 then
-        n2_exists = false
-    end
-    if n1_exists then
-        nodes[ny][nx] = true
-    end
-    if n2_exists then
-        nodes[ny2][nx2] = true
+    if nodes[ny] ~= nil then
+        if nodes[ny][nx] ~= nil then
+            nodes[ny][nx] = true
+        end
     end
 end
 
@@ -78,14 +68,12 @@ local function part_one()
             antinodes[i][j] = false
         end
     end
-    local i = 1
-    while i < #antennae + 1 do
-        for s = i, #antennae do
-            if get_type(data, antennae[i]) == get_type(data, antennae[s]) then
-                make_antinodes(antennae[i], antennae[s], antinodes)
+    for a = 1, #antennae do
+        for b = 1, #antennae do
+            if get_type(data, antennae[a]) == get_type(data, antennae[b]) then
+                make_antinodes(antennae[a], antennae[b], antinodes)
             end
         end
-        i = i + 1
     end
     for y = 1, #antinodes do
         for x = 1, #antinodes[1] do
