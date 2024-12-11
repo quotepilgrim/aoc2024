@@ -59,6 +59,7 @@ local function make_antinodes(a, b, nodes)
     local dy = by - ay
 
     if ax == bx and ay == by then
+        nodes[ay][ax] = true
         return
     end
 
